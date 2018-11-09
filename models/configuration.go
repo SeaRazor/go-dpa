@@ -8,9 +8,8 @@ import (
 //Configuration settings
 type Configuration struct {
 	DatabaseConnectionString    string                      `json:"connectionString"`
-	IdentityServerConfiguration IdentityServerConfiguration `json:"identity_server_config"`
+	IdentityServerConfiguration IdentityServerConfiguration `json:"identityServer"`
 	ServiceUrl                  string                      `json:"serviceUrl"`
-
 }
 
 //IdentityServerConfiguration configuration
@@ -21,7 +20,7 @@ type IdentityServerConfiguration struct {
 
 var CurrentConfiguration Configuration
 
-func init()  {
+func init() {
 	configFile, err := os.Open("appsettings.json")
 	defer configFile.Close()
 	if err != nil {
@@ -29,7 +28,5 @@ func init()  {
 	}
 	jsonParser := json.NewDecoder(configFile)
 	jsonParser.Decode(&CurrentConfiguration)
-	
+
 }
-
-
