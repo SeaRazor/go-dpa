@@ -21,7 +21,7 @@ type IdentityServerConfiguration struct {
 var CurrentConfiguration Configuration
 
 func init() {
-	configFile, err := os.Open("appsettings.json")
+	configFile, err := os.Open("settings.json")
 	defer configFile.Close()
 	if err != nil {
 		panic(err)

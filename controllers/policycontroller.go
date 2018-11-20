@@ -17,7 +17,7 @@ func (handler *PolicyController) GetPolicy(w http.ResponseWriter, r *http.Reques
 	vars := mux.Vars(r)
 	policyId := vars["policyId"]
 	id, err := strconv.Atoi(policyId)
-	policy, err := handler.PolicyResource.GetPolicyById(id)
+	policy, err := handler.PolicyResource.GetPolicyById(int32(id))
 	if err != nil {
 		panic(err)
 	}
@@ -34,10 +34,11 @@ func (handler *PolicyController) GetPolicies(w http.ResponseWriter, r *http.Requ
 	requestParams := models.CreateRequestParams(filterOptions, sortingOptions)
 	policies, err := handler.PolicyResource.GetPolicies(requestParams)
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(policies)
+	json.NewEncoder(w).Encode(policies.Documents)
 }
 
 func (handler *PolicyController) PostPolicy(w http.ResponseWriter, r *http.Request) {
@@ -49,11 +50,12 @@ func (handler *PolicyController) PostPolicy(w http.ResponseWriter, r *http.Reque
 	var policy models.Policy
 	decoder := json.NewDecoder(requestBody)
 	err := decoder.Decode(&policy)
-	if err == nil {
-		panic(err)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 	newPolicy, err := handler.PolicyResource.CreatePolicy(&policy)
-	if err == nil {
+	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -68,13 +70,15 @@ func (handler *PolicyController) PutPolicy(w http.ResponseWriter, r *http.Reques
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&policy)
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 	id, err := strconv.Atoi(policyId)
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
-	updatedPolicy, err := handler.PolicyResource.UpdatePolicy(id, &policy)
+	updatedPolicy, err := handler.PolicyResource.UpdatePolicy(int32(id), &policy)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -88,9 +92,10 @@ func (handler *PolicyController) DeletePolicy(w http.ResponseWriter, r *http.Req
 	policyId := vars["policyId"]
 	id, err := strconv.Atoi(policyId)
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
-	err = handler.PolicyResource.DeletePolicy(id)
+	err = handler.PolicyResource.DeletePolicy(int32(id))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return

@@ -1,32 +1,24 @@
 package models
 
+import "strings"
+
 type RequestParams struct {
-	Filter  Filter
-	Sorting Sorting
+	Filter []string
+	Sorting []string
 }
 
-type Sorting struct {
-	SortingOptions []string
-}
-
-type Filter struct {
-	FilterOptions []string
-}
 
 func CreateRequestParams(filterOptions []string, sortingOptions []string) RequestParams {
 	requestParams := RequestParams{
-		Filter:  CreateFilter(filterOptions),
-		Sorting: CreateSorting(sortingOptions),
+		Filter:  filterOptions,
+		Sorting: sortingOptions,
 	}
 	return requestParams
 }
 
-func CreateFilter(filterOptions []string) Filter {
-	filter := Filter{FilterOptions: filterOptions}
-	return filter
+func (params *RequestParams) CreateSortingString() string{
+	var result = strings.Join(params.Sorting, ",")
+	return result
 }
 
-func CreateSorting(sortingOptions []string) Sorting {
-	sorting := Sorting{SortingOptions: sortingOptions}
-	return sorting
-}
+

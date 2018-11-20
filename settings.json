@@ -1,0 +1,8 @@
+{
+	"connectionString": "sqlserver:server=(local);user id=dev;password=dev;database=DPA;",
+	"identityServer": {
+		"url": "https://localhost:44333",
+		"certificate": "test_cert"
+	},
+	"serviceUrl": "localhost:36000"
+}
