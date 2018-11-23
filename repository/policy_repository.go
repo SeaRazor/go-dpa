@@ -45,20 +45,19 @@ func (repo *PolicyRepository) GetPolicies(params models.RequestParams) ([]models
 	return policies, result.Error
 }
 
-func (repo *PolicyRepository) CreatePolicy(policy *models.Policy) (models.Policy, error) {
+func (repo *PolicyRepository) CreatePolicy(policy models.Policy) (models.Policy, error) {
 	db.NewRecord(policy)
-	var newPolicy models.Policy
-	result:= db.Create(&newPolicy)
-	return newPolicy, result.Error
+	result:= db.Create(&policy)
+	return policy, result.Error
 }
 
-func (repo *PolicyRepository) UpdatePolicy(id int32, policy *models.Policy) (models.Policy, error) {
-	policyToUpdate,err := repo.GetPolicy(id)
+func (repo *PolicyRepository) UpdatePolicy(id int32, policyToUpdate models.Policy) (models.Policy, error) {
+	updatedPolicy,err := repo.GetPolicy(id)
 	if err != nil {
-		return *policy, err
+		return policyToUpdate, err
 	}
-	policyToUpdate.UpdateValues(policy)
-	var updatedPolicy models.Policy
+	updatedPolicy.UpdateValues(&policyToUpdate)
+
 	result := db.Save(&updatedPolicy)
 	return updatedPolicy, result.Error
 }

@@ -35,3 +35,20 @@ func ConvertDomainToContractCollection(domains []models.Policy)(contracts.Policy
 	return documentCollection, nil
 }
 
+func ConvertContractToDomain(document contracts.PolicyDocument) (models.Policy, error) {
+	domain := models.Policy{}
+	domain.ID = document.ID
+	domain.CreationDate = document.CreationDate
+	domain.Identifier = document.Identifier
+	domain.Tag = document.Tag
+	domain.TenantID = document.TenantID
+	domain.IsEditable = document.IsEditable
+	domain.IsDeleted = document.IsDeleted
+	domain.Statement1 = document.Statement1.Text
+	domain.Statement2 = document.Statement2.Text
+	domain.Statement3 = document.Statement3.Text
+	domain.Statement4 = document.Statement4.Text
+	domain.Statement5 = document.Statement5.Text
+	return domain, nil
+}
+

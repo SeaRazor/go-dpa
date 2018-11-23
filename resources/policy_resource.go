@@ -37,20 +37,37 @@ func (res *PolicyResource) GetPolicies(params models.RequestParams) (contracts.P
 
 }
 
-func (res *PolicyResource) CreatePolicy(policy *models.Policy) (models.Policy, error) {
-	newPolicy, err := res.PolicyRepository.CreatePolicy(policy)
+func (res *PolicyResource) CreatePolicy(policyDocument contracts.PolicyDocument) (contracts.PolicyDocument, error) {
+
+	newPolicy,err := converters.ConvertContractToDomain(policyDocument)
 	if err != nil {
 		panic(err)
 	}
-	return newPolicy, nil
+	createdPolicy, err := res.PolicyRepository.CreatePolicy(newPolicy)
+	if err != nil {
+		panic(err)
+	}
+	newPolicyDocument,err := converters.ConvertDomainToContract(createdPolicy)
+	if err != nil {
+		panic(err)
+	}
+	return newPolicyDocument, nil
 }
 
-func (res *PolicyResource) UpdatePolicy(id int32, policy *models.Policy) (models.Policy, error) {
-	updatedPolicy, err := res.PolicyRepository.UpdatePolicy(id, policy)
+func (res *PolicyResource) UpdatePolicy(id int32, policyDocument contracts.PolicyDocument) (contracts.PolicyDocument, error) {
+	policyToUpdate,err := converters.ConvertContractToDomain(policyDocument)
+	if err != nil{
+		panic(err)
+	}
+	updatedPolicy, err := res.PolicyRepository.UpdatePolicy(id, policyToUpdate)
 	if err != nil {
 		panic(err)
 	}
-	return updatedPolicy, nil
+	updatedPolicyDocument, err := converters.ConvertDomainToContract(updatedPolicy)
+	if err != nil {
+		panic(err)
+	}
+	return updatedPolicyDocument, nil
 }
 
 func (res *PolicyResource) DeletePolicy(id int32) error {

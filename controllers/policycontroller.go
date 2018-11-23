@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"dpa/contracts"
 	"dpa/models"
 	"dpa/resources"
 	"encoding/json"
@@ -47,14 +48,14 @@ func (handler *PolicyController) PostPolicy(w http.ResponseWriter, r *http.Reque
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	var policy models.Policy
+	var policyDocument *contracts.PolicyDocument
 	decoder := json.NewDecoder(requestBody)
-	err := decoder.Decode(&policy)
+	err := decoder.Decode(&policyDocument)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	newPolicy, err := handler.PolicyResource.CreatePolicy(&policy)
+	newPolicy, err := handler.PolicyResource.CreatePolicy(*policyDocument)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -66,9 +67,9 @@ func (handler *PolicyController) PostPolicy(w http.ResponseWriter, r *http.Reque
 func (handler *PolicyController) PutPolicy(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	policyId := vars["policyId"]
-	var policy models.Policy
+	var policyDocument contracts.PolicyDocument
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&policy)
+	err := decoder.Decode(&policyDocument)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -78,7 +79,7 @@ func (handler *PolicyController) PutPolicy(w http.ResponseWriter, r *http.Reques
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	updatedPolicy, err := handler.PolicyResource.UpdatePolicy(int32(id), &policy)
+	updatedPolicy, err := handler.PolicyResource.UpdatePolicy(int32(id), policyDocument)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -89,7 +90,7 @@ func (handler *PolicyController) PutPolicy(w http.ResponseWriter, r *http.Reques
 
 func (handler *PolicyController) DeletePolicy(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	policyId := vars["policyId"]
+	policyId := vars["policyid"]
 	id, err := strconv.Atoi(policyId)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
